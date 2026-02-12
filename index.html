@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Promise to You ✦ Ancient Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #2e1e0e 0%, #3d2a15 100%);
+            font-family: 'Sitka Banner', 'Sitka', 'Times New Roman', 'Palatino', 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="1" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.15 0"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.15"/></svg>');
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .scroll-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* SEALED SCROLL */
+        .sealed-scroll {
+            width: 100%;
+            background: #dacba4;
+            background: linear-gradient(165deg, #c4b28a 0%, #e5d7b0 30%, #d2c299 70%, #b8a47e 100%);
+            border-radius: 20px 20px 80px 80px;
+            box-shadow: 
+                0 20px 30px rgba(0,0,0,0.5),
+                inset 0 -5px 25px rgba(0,0,0,0.2),
+                inset 0 5px 15px rgba(255,255,240,0.6);
+            padding: 40px 35px;
+            position: relative;
+            border: 1px solid #aa9f7a;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .sealed-scroll::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><filter id="paper"><feTurbulence baseFrequency="0.8" numOctaves="2"/><feColorMatrix values="0 0 0 0 0.8 0 0 0 0 0.7 0 0 0 0 0.5 0 0 0 0.25 0"/></filter><rect width="200" height="200" filter="url(%23paper)" opacity="0.1"/></svg>');
+            background-size: 200px 200px;
+            opacity: 0.2;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .scroll-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #8b7a5a;
+            padding-bottom: 15px;
+        }
+
+        .scroll-header span {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .seal-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 10px;
+            position: relative;
+        }
+
+        .seal {
+            width: 120px;
+            height: 120px;
+            background: #b5533a;
+            background: radial-gradient(circle at 30% 30%, #d46b4a, #8b3c2a);
+            border-radius: 50% 60% 50% 40% / 40% 50% 60% 50%;
+            transform: rotate(-15deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 
+                0 10px 15px rgba(0,0,0,0.4),
+                inset 0 -3px 0 rgba(0,0,0,0.2),
+                inset 0 0 15px rgba(255,215,0,0.3);
+            border: 3px solid #9f4d32;
+            border-right-color: #6b2e1c;
+            border-bottom-color: #542316;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .seal:hover {
+            transform: rotate(-10deg) scale(1.05);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,200,0,0.4);
+        }
+
+        .seal:active {
+            transform: rotate(-5deg) scale(0.98);
+        }
+
+        .seal-inner {
+            width: 80px;
+            height: 80px;
+            background: #b8860b;
+            background: radial-gradient(circle, #ffd700, #b8860b);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: #4a1e12;
+            text-shadow: 1px 1px 0 rgba(255,215,0,0.5);
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2);
+            border: 2px solid #ffd700;
+        }
+
+        .seal-ribbon {
+            position: absolute;
+            width: 200px;
+            height: 20px;
+            background: #a0522d;
+            background: linear-gradient(90deg, #6b3a1e, #b87c4b, #6b3a1e);
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            z-index: -1;
+        }
+
+        .ribbon-left {
+            transform: rotate(-25deg);
+            left: -40px;
+            top: 50px;
+        }
+
+        .ribbon-right {
+            transform: rotate(25deg);
+            right: -40px;
+            top: 50px;
+        }
+
+        .seal-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.3rem;
+            color: #3a2c1a;
+            font-style: italic;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 rgba(255,255,200,0.8);
+            border-top: 1px solid #aa9f7a;
+            padding-top: 20px;
+            font-family: 'Sitka Banner', 'Sitka', 'Times New Roman', serif;
+        }
+
+        /* UNROLLED SCROLL */
+        .unrolled-scroll {
+            width: 100%;
+            background: #f9efd0;
+            background: linear-gradient(165deg, #e8dbbd 0%, #fff6e0 30%, #f5ebcc 70%, #dfd2b0 100%);
+            border-radius: 0 0 20px 20px;
+            box-shadow: 
+                0 30px 40px rgba(0,0,0,0.4),
+                inset 0 -5px 20px rgba(0,0,0,0.1),
+                inset 0 5px 25px rgba(255,255,240,0.8);
+            position: relative;
+            border-left: 8px solid #b8a47e;
+            border-right: 8px solid #b8a47e;
+            border-bottom: 3px solid #9b8a65;
+            border-top: 2px solid #d2c299;
+            display: none;
+            animation: unroll 1.2s ease-out forwards;
+            transform-origin: top center;
+            margin-top: -10px;
+            z-index: 5;
+        }
+
+        @keyframes unroll {
+            0% {
+                transform: scaleY(0);
+                opacity: 0;
+                margin-top: -100px;
+            }
+            100% {
+                transform: scaleY(1);
+                opacity: 1;
+                margin-top: -10px;
+            }
+        }
+
+        .scroll-content {
+            padding: 50px 45px;
+            position: relative;
+        }
+
+        .scroll-content::before {
+            content: "✧✦✧";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #a17941;
+            font-size: 1.8rem;
+            letter-spacing: 15px;
+        }
+
+        .scroll-content::after {
+            content: "✧✦✧";
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #a17941;
+            font-size: 1.8rem;
+            letter-spacing: 15px;
+        }
+
+        .promise-title {
+            font-size: 3rem;
+            text-align: center;
+            color: #3d2a1a;
+            font-family: 'Sitka Banner', 'Sitka', 'Georgia', 'Times New Roman', serif;
+            text-shadow: 2px 2px 0 rgba(180, 130, 70, 0.2);
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            font-weight: bold;
+            border-bottom: 2px solid #c4a079;
+            padding-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .promise-text {
+            width: 100%;
+            padding: 30px;
+            font-family: 'Sitka Banner', 'Sitka', 'Georgia', 'Times New Roman', serif;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: #2c1e12;
+            background: rgba(255, 245, 215, 0.4);
+            border: 2px solid #ccb38c;
+            box-shadow: inset 0 0 25px rgba(160, 120, 60, 0.1);
+            border-radius: 12px;
+            margin: 25px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: visible;
+            height: auto;
+            min-height: auto;
+            resize: none;
+        }
+
+        .signature-area {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 30px;
+            font-size: 1.3rem;
+            color: #4a3723;
+            border-top: 1px dashed #b4946a;
+            padding-top: 25px;
+            font-family: 'Sitka Banner', 'Sitka', 'Times New Roman', serif;
+        }
+
+        .signature-line {
+            font-family: 'Brush Script MT', 'Sitka Banner', cursive;
+            font-size: 2rem;
+            margin-left: 15px;
+            color: #4a1e1a;
+            border-bottom: 2px solid #ab7e4b;
+            min-width: 200px;
+            padding: 0 10px 5px;
+            text-align: center;
+        }
+
+        .seal-stamp {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #b87333, #8b4513);
+            border-radius: 50%;
+            margin-left: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffd700;
+            font-size: 1.8rem;
+            border: 2px solid #d4af37;
+            transform: rotate(10deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        .scroll-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            color: #6b4f32;
+            font-size: 0.9rem;
+            font-family: 'Sitka Banner', 'Sitka', 'Times New Roman', serif;
+        }
+
+        .reset-button {
+            background: #b48a5c;
+            border: 2px solid #5d3e1e;
+            color: #fef7e6;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: 'Sitka Banner', 'Sitka', 'Georgia', serif;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 0 #3d2e1a;
+            transition: all 0.08s;
+            margin-top: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .reset-button:hover {
+            background: #c79a6e;
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #3d2e1a;
+        }
+
+        .reset-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0 #3d2e1a;
+        }
+
+        .instruction {
+            color: #f0dbc0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            text-shadow: 2px 2px 2px #1f150a;
+            font-style: italic;
+            font-family: 'Sitka Banner', 'Sitka', 'Times New Roman', serif;
+        }
+
+        .broken-seal {
+            opacity: 0.6;
+            filter: grayscale(0.6);
+            transform: rotate(10deg) scale(0.9);
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .sealed-scroll {
+                padding: 25px 20px;
+            }
+            .promise-title {
+                font-size: 2.2rem;
+            }
+            .promise-text {
+                font-size: 1.1rem;
+                padding: 20px;
+            }
+            .signature-line {
+                min-width: 120px;
+            }
+            .scroll-content {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <div class="instruction">✧  An ancient scroll, sealed with love and truth  ✧</div>
+        
+        <!-- SEALED SCROLL -->
+        <div id="sealedScroll" class="sealed-scroll">
+            <div class="scroll-header">
+                <span>🕯️</span>
+                <span>⚜️</span>
+                <span>📜</span>
+            </div>
+            
+            <div class="seal-container">
+                <div class="seal-ribbon ribbon-left"></div>
+                <div id="seal" class="seal">
+                    <div class="seal-inner">
+                        ✦
+                    </div>
+                </div>
+                <div class="seal-ribbon ribbon-right"></div>
+            </div>
+            
+            <div class="seal-text">
+                ⚔️ BREAK THE SEAL ⚔️
+            </div>
+            <div style="text-align: center; margin-top: 15px; color: #5e4a2b; font-size: 1.1rem; font-family: 'Sitka Banner', 'Sitka', serif;">
+                <i>— click the wax seal —</i>
+            </div>
+        </div>
+
+        <!-- UNROLLED SCROLL - NO SCROLLING, FULL TEXT VISIBLE -->
+        <div id="unrolledScroll" class="unrolled-scroll">
+            <div class="scroll-content">
+                <h1 class="promise-title">MY PROMISE</h1>
+                
+                <!-- Your exact promise - NO SCROLLBAR, fully visible -->
+                <div id="promiseText" class="promise-text">
+I promise to love you endlessly, to choose you every single day not only when it's easy but especially when it's hard. I promise to be your peace when the world gets loud, I'll be your home the place you can always return to.
+
+I promise to listen not just to hear your words, but to understand them, to comprehend the feelings behind them, the silence between them, the things you don't always say out loud. I promise to never make you feel like your voice is too much or your heart is too heavy to hold.
+
+I promise to forever cherish you not as a possession, but as a gift I get to unwrap every single day. And on our bad days, when we're tired, frustrated, or not our best-selves, I promise to love you even more. To fight for us, not against you. To hold on tighter when letting go feels easier.
+
+I promise to show you, in a million small ways, that saying yes to me was never a mistake. Every moment, every memory, every version of us i'd choose it all over again, I'd choose you over and over, in this life and whatever comes after.
+
+This is my sacred vow to you. Today, tomorrow, and for all the years we have left.
+                </div>
+                
+                <div class="signature-area">
+                    <span style="font-style: italic;">Sealed with my heart,</span>
+                    <span id="signatureField" class="signature-line" contenteditable="true">Jimo Ahmed Olalekan</span>
+                    <div class="seal-stamp">
+                        ✦
+                    </div>
+                </div>
+                
+                <div class="scroll-footer">
+                    <span>✧  GREY & PEMPE  ✧</span>
+                    <span>⚲  Everlasting  ⚲</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESET BUTTON -->
+        <button id="resetBtn" class="reset-button">⟲ Reseal Scroll</button>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            const sealedScroll = document.getElementById('sealedScroll');
+            const unrolledScroll = document.getElementById('unrolledScroll');
+            const seal = document.getElementById('seal');
+            const resetBtn = document.getElementById('resetBtn');
+            const signatureField = document.getElementById('signatureField');
+
+            function breakSeal() {
+                if (unrolledScroll.style.display === 'block') return;
+
+                seal.style.transition = 'all 0.2s';
+                seal.classList.add('broken-seal');
+                
+                sealedScroll.style.background = '#bbaa84';
+                sealedScroll.style.cursor = 'default';
+                
+                unrolledScroll.style.display = 'block';
+                
+                seal.style.pointerEvents = 'none';
+                sealedScroll.style.pointerEvents = 'none';
+                
+                createConfetti();
+            }
+
+            function resealScroll() {
+                unrolledScroll.style.display = 'none';
+                
+                seal.classList.remove('broken-seal');
+                seal.style.pointerEvents = 'auto';
+                seal.style.transition = 'all 0.3s';
+                
+                sealedScroll.style.background = 'linear-gradient(165deg, #c4b28a 0%, #e5d7b0 30%, #d2c299 70%, #b8a47e 100%)';
+                sealedScroll.style.cursor = 'pointer';
+                sealedScroll.style.pointerEvents = 'auto';
+                
+                seal.style.transform = 'rotate(-15deg)';
+            }
+
+            seal.addEventListener('click', function(e) {
+                e.stopPropagation();
+                breakSeal();
+            });
+
+            sealedScroll.addEventListener('click', function(e) {
+                if (e.target === seal || seal.contains(e.target)) return;
+                breakSeal();
+            });
+
+            resetBtn.addEventListener('click', function() {
+                resealScroll();
+            });
+
+            function saveSignature() {
+                if (signatureField) {
+                    localStorage.setItem('ancientPromise_signature', signatureField.innerText);
+                }
+            }
+
+            function loadSignature() {
+                const savedSignature = localStorage.getItem('ancientPromise_signature');
+                if (savedSignature && signatureField) {
+                    signatureField.innerText = savedSignature;
+                }
+            }
+
+            if (signatureField) {
+                signatureField.addEventListener('input', saveSignature);
+            }
+
+            loadSignature();
+
+            function createConfetti() {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 40,
+                        spread: 60,
+                        origin: { y: 0.6, x: 0.5 },
+                        colors: ['#d4af37', '#b87333', '#c49a6c', '#8b5a2b']
+                    });
+                } else {
+                    const sparkleDiv = document.createElement('div');
+                    sparkleDiv.innerHTML = '✨✨✨';
+                    sparkleDiv.style.position = 'fixed';
+                    sparkleDiv.style.top = '50%';
+                    sparkleDiv.style.left = '50%';
+                    sparkleDiv.style.transform = 'translate(-50%, -50%)';
+                    sparkleDiv.style.fontSize = '4rem';
+                    sparkleDiv.style.zIndex = '9999';
+                    sparkleDiv.style.pointerEvents = 'none';
+                    sparkleDiv.style.opacity = '1';
+                    sparkleDiv.style.transition = 'all 0.8s';
+                    document.body.appendChild(sparkleDiv);
+                    
+                    setTimeout(() => {
+                        sparkleDiv.style.opacity = '0';
+                        sparkleDiv.style.transform = 'translate(-50%, -100px)';
+                        setTimeout(() => sparkleDiv.remove(), 900);
+                    }, 50);
+                }
+            }
+        })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+</body>
+</html>
